@@ -7,6 +7,7 @@ from src.config import settings
 from src.database import init_db
 from src.routers.hooks import router as hooks_router
 from src.routers.endpoints import router as endpoints_router
+from src.routers.ui import router as ui_router
 
 
 @asynccontextmanager
@@ -20,6 +21,7 @@ app = FastAPI(title="hookshot", description="Generic webhook receiver and notifi
 
 app.include_router(hooks_router)
 app.include_router(endpoints_router)
+app.include_router(ui_router)
 
 
 @app.get("/health")

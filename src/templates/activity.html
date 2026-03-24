@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Activity{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Activity Log</h1>
+<div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-800">
+            <tr>
+                <th class="text-left px-4 py-2 text-gray-400">Time</th>
+                <th class="text-left px-4 py-2 text-gray-400">Endpoint</th>
+                <th class="text-left px-4 py-2 text-gray-400">Source IP</th>
+                <th class="text-left px-4 py-2 text-gray-400">Status</th>
+                <th class="text-left px-4 py-2 text-gray-400">Notification</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr class="border-t border-gray-800 cursor-pointer hover:bg-gray-800/50" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <td class="px-4 py-2 font-mono text-xs text-gray-500">{{ entry.received_at[:19] }}</td>
+                <td class="px-4 py-2">{{ entry.endpoint_name or "Unknown" }}</td>
+                <td class="px-4 py-2 font-mono text-xs text-gray-500">{{ entry.source_ip }}</td>
+                <td class="px-4 py-2">
+                    <span class="px-2 py-0.5 rounded text-xs {% if entry.status == 'success' %}bg-green-900 text-green-300{% elif entry.status == 'failed' %}bg-red-900 text-red-300{% else %}bg-yellow-900 text-yellow-300{% endif %}">{{ entry.status }}</span>
+                </td>
+                <td class="px-4 py-2 text-gray-300">{{ entry.notification_title[:60] }}</td>
+            </tr>
+            <tr class="hidden border-t border-gray-800 bg-gray-800/30">
+                <td colspan="5" class="px-4 py-3">
+                    <div class="text-xs font-mono text-gray-400 mb-2"><strong>Title:</strong> {{ entry.notification_title }}</div>
+                    <div class="text-xs font-mono text-gray-400 mb-2"><strong>Body:</strong> {{ entry.notification_body }}</div>
+                    <details class="text-xs font-mono text-gray-500">
+                        <summary class="cursor-pointer">Raw Payload</summary>
+                        <pre class="mt-2 p-2 bg-gray-900 rounded overflow-x-auto">{{ entry.payload }}</pre>
+                    </details>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not entries %}
+            <tr><td colspan="5" class="px-4 py-8 text-center text-gray-600">No activity recorded yet</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

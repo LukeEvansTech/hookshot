@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title_suffix %} — {{ endpoint.name }}{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <a href="/ui/endpoints" class="text-sm text-gray-500 hover:text-gray-300">← Back to Endpoints</a>
+</div>
+<div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-4">{{ endpoint.name }}</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div><span class="text-gray-500">Webhook URL:</span><br><code class="text-blue-400">{{ base_url }}/hook/{{ endpoint.id }}</code></div>
+        <div><span class="text-gray-500">Parser:</span><br>{{ endpoint.parser_type }}{% if endpoint.parser_name %} ({{ endpoint.parser_name }}){% endif %}</div>
+        <div><span class="text-gray-500">Apprise Tag:</span><br>{{ endpoint.apprise_tag or "none" }}</div>
+        <div><span class="text-gray-500">Status:</span><br>{{ "Enabled" if endpoint.enabled else "Disabled" }}</div>
+        <div><span class="text-gray-500">Created:</span><br>{{ endpoint.created_at[:19] }}</div>
+        <div><span class="text-gray-500">Secret:</span><br>{{ "Configured" if endpoint.secret else "Not set" }}</div>
+    </div>
+    <div class="mt-6 flex gap-3">
+        <form hx-delete="/endpoints/{{ endpoint.id }}" hx-confirm="Delete this endpoint?" hx-on::after-request="if(event.detail.successful) window.location.href='/ui/endpoints'">
+            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

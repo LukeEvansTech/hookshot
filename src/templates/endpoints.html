@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title_suffix %} — Endpoints{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Webhook Endpoints</h1>
+    <button onclick="document.getElementById('create-form').classList.toggle('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">+ New Endpoint</button>
+</div>
+
+<div id="create-form" class="hidden bg-gray-900 border border-gray-800 rounded-lg p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4">Create Endpoint</h2>
+    <form hx-post="/endpoints" hx-on::after-request="if(event.detail.successful) window.location.reload()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Name</label>
+                <input name="name" required class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" placeholder="e.g. eBay Account Deletion">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Parser Type</label>
+                <select name="parser_type" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm">
+                    <option value="generic">Generic</option>
+                    <option value="builtin">Built-in</option>
+                    <option value="template">Template</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Parser Name / Template</label>
+                <input name="parser_name" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" placeholder="e.g. ebay_deletion, github, or Jinja2 template">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Apprise Tag</label>
+                <input name="apprise_tag" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" placeholder="e.g. all, discord, admin">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Secret (optional)</label>
+                <input name="secret" type="password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" placeholder="HMAC shared secret">
+            </div>
+        </div>
+        <button type="submit" class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm">Create</button>
+    </form>
+</div>
+
+<div id="endpoint-list" class="space-y-3">
+    {% for ep in endpoints %}
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 flex items-center justify-between">
+        <div>
+            <div class="font-semibold">{{ ep.name }}</div>
+            <div class="text-xs text-gray-500 font-mono mt-1">{{ base_url }}/hook/{{ ep.id }}</div>
+            <div class="text-xs text-gray-400 mt-1">
+                <span class="px-1.5 py-0.5 rounded bg-gray-800">{{ ep.parser_type }}{% if ep.parser_name %}: {{ ep.parser_name }}{% endif %}</span>
+                {% if ep.apprise_tag %}<span class="ml-2 px-1.5 py-0.5 rounded bg-gray-800">tag: {{ ep.apprise_tag }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs {% if ep.enabled %}text-green-400{% else %}text-red-400{% endif %}">{{ "Enabled" if ep.enabled else "Disabled" }}</span>
+            <a href="/ui/endpoints/{{ ep.id }}" class="text-blue-400 hover:text-blue-300 text-sm">Details</a>
+        </div>
+    </div>
+    {% endfor %}
+    {% if not endpoints %}
+    <div class="text-center text-gray-600 py-12">No endpoints configured yet. Create one above.</div>
+    {% endif %}
+</div>
+{% endblock %}

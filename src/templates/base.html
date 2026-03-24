@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hookshot{% block title_suffix %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+    <nav class="bg-gray-900 border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-6">
+            <a href="/" class="text-lg font-bold text-blue-400">hookshot</a>
+            <a href="/" class="text-sm text-gray-400 hover:text-gray-200">Dashboard</a>
+            <a href="/ui/endpoints" class="text-sm text-gray-400 hover:text-gray-200">Endpoints</a>
+            <a href="/ui/activity" class="text-sm text-gray-400 hover:text-gray-200">Activity</a>
+        </div>
+    </nav>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
