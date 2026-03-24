@@ -1,12 +1,11 @@
-import os
 import pytest
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture
-def tmp_db(tmp_path):
+def tmp_db(tmp_path, monkeypatch):
     db_path = str(tmp_path / "test.db")
-    os.environ["DATABASE_PATH"] = db_path
+    monkeypatch.setenv("DATABASE_PATH", db_path)
     return db_path
 
 
