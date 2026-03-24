@@ -1,0 +1,38 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    "docker:enableMajor",
+    "helpers:pinGitHubActionDigests",
+    ":automergeBranch",
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    ":semanticCommits",
+    ":timezone(Europe/London)",
+  ],
+  dependencyDashboardTitle: "Renovate Dashboard",
+  suppressNotifications: [
+    "prEditedNotification",
+    "prIgnoreNotification",
+  ],
+  packageRules: [
+    {
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["minor", "patch"],
+      automerge: true,
+    },
+    {
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      automerge: true,
+    },
+    {
+      matchManagers: ["pip_requirements"],
+      groupName: "Python dependencies",
+    },
+  ],
+  reviewers: [
+    "github-copilot[bot]"
+  ],
+  reviewersSampleSize: 1,
+}
