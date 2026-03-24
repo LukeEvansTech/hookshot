@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from src.config import settings
 from src.database import init_db
 from src.routers.hooks import router as hooks_router
+from src.routers.endpoints import router as endpoints_router
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="hookshot", description="Generic webhook receiver and notification forwarder", lifespan=lifespan)
 
 app.include_router(hooks_router)
+app.include_router(endpoints_router)
 
 
 @app.get("/health")
