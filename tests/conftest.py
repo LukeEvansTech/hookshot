@@ -6,6 +6,8 @@ from fastapi.testclient import TestClient
 def tmp_db(tmp_path, monkeypatch):
     db_path = str(tmp_path / "test.db")
     monkeypatch.setenv("DATABASE_PATH", db_path)
+    from src.config import settings
+    monkeypatch.setattr(settings, "database_path", db_path)
     return db_path
 
 

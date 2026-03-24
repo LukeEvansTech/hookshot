@@ -1,7 +1,23 @@
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 
-app = FastAPI(title="hookshot", description="Generic webhook receiver and notification forwarder")
+from src.config import settings
+from src.database import init_db
+from src.routers.hooks import router as hooks_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with init_db(settings.database_path) as db:
+        app.state.db = db
+        yield
+
+
+app = FastAPI(title="hookshot", description="Generic webhook receiver and notification forwarder", lifespan=lifespan)
+
+app.include_router(hooks_router)
 
 
 @app.get("/health")
