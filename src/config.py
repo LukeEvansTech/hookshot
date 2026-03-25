@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     apprise_key: str = "hookshot"
     database_path: str = "/data/hookshot.db"
     activity_retention: int = 10000
+    admin_password: str = ""
 
     model_config = {"env_prefix": "", "case_sensitive": False}
 
