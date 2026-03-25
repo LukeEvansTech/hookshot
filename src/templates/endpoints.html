@@ -8,7 +8,7 @@
 
 <div id="create-form" class="hidden bg-gray-900 border border-gray-800 rounded-lg p-6 mb-6">
     <h2 class="text-lg font-semibold mb-4">Create Endpoint</h2>
-    <form hx-post="/endpoints" hx-on::after-request="if(event.detail.successful) window.location.reload()">
+    <form method="post" action="/ui/endpoints">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Name</label>
@@ -16,15 +16,20 @@
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Parser Type</label>
-                <select name="parser_type" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm">
-                    <option value="generic">Generic</option>
-                    <option value="builtin">Built-in</option>
-                    <option value="template">Template</option>
+                <select name="parser_type" id="parser-type" onchange="updateParserField()" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm">
+                    <option value="generic">Generic (default fallback)</option>
+                    <option value="builtin">Built-in Parser</option>
+                    <option value="template">Custom Template</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm text-gray-400 mb-1">Parser Name / Template</label>
-                <input name="parser_name" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" placeholder="e.g. ebay_deletion, github, or Jinja2 template">
+            <div id="parser-name-field" class="hidden">
+                <label class="block text-sm text-gray-400 mb-1" id="parser-name-label">Parser</label>
+                <select name="parser_name_builtin" id="parser-name-builtin" class="hidden w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm">
+                    <option value="ebay_deletion">eBay Account Deletion</option>
+                    <option value="github">GitHub Webhooks</option>
+                </select>
+                <textarea name="parser_name_template" id="parser-name-template" class="hidden w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm font-mono" rows="3" placeholder="title: Deploy {{ data.status }} — {{ data.app }}&#10;body: {{ data.message }}"></textarea>
+                <input type="hidden" name="parser_name" id="parser-name-value">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Apprise Tag</label>
@@ -60,4 +65,34 @@
     <div class="text-center text-gray-600 py-12">No endpoints configured yet. Create one above.</div>
     {% endif %}
 </div>
+<script>
+function updateParserField() {
+    const type = document.getElementById('parser-type').value;
+    const field = document.getElementById('parser-name-field');
+    const builtin = document.getElementById('parser-name-builtin');
+    const template = document.getElementById('parser-name-template');
+    const label = document.getElementById('parser-name-label');
+    const hidden = document.getElementById('parser-name-value');
+
+    if (type === 'generic') {
+        field.classList.add('hidden');
+        hidden.value = '';
+    } else if (type === 'builtin') {
+        field.classList.remove('hidden');
+        builtin.classList.remove('hidden');
+        template.classList.add('hidden');
+        label.textContent = 'Parser';
+        hidden.value = builtin.value;
+        builtin.onchange = () => { hidden.value = builtin.value; };
+    } else if (type === 'template') {
+        field.classList.remove('hidden');
+        builtin.classList.add('hidden');
+        template.classList.remove('hidden');
+        label.textContent = 'Template (Jinja2)';
+        hidden.value = template.value;
+        template.oninput = () => { hidden.value = template.value; };
+    }
+}
+document.addEventListener('DOMContentLoaded', updateParserField);
+</script>
 {% endblock %}

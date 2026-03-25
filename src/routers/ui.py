@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Form, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from src.database import get_endpoint, list_endpoints
+from src.database import create_endpoint, get_endpoint, list_endpoints
 from src.services.activity import get_activity, get_activity_count
 
 router = APIRouter()
@@ -33,6 +33,24 @@ async def endpoints_page(request: Request):
         "endpoints": endpoints,
         "base_url": base_url,
     })
+
+
+@router.post("/ui/endpoints")
+async def create_endpoint_form(
+    request: Request,
+    name: str = Form(...),
+    parser_type: str = Form("generic"),
+    parser_name: str = Form(""),
+    apprise_tag: str = Form(""),
+    secret: str = Form(""),
+):
+    db = request.app.state.db
+    await create_endpoint(
+        db, name=name, parser_type=parser_type,
+        parser_name=parser_name, apprise_tag=apprise_tag,
+        secret=secret or None,
+    )
+    return RedirectResponse(url="/ui/endpoints", status_code=302)
 
 
 @router.get("/ui/endpoints/{endpoint_id}", response_class=HTMLResponse)
