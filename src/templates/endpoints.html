@@ -28,7 +28,7 @@
                     <option value="ebay_deletion">eBay Account Deletion</option>
                     <option value="github">GitHub Webhooks</option>
                 </select>
-                <textarea name="parser_name_template" id="parser-name-template" class="hidden w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm font-mono" rows="3" placeholder="title: Deploy {{ data.status }} — {{ data.app }}&#10;body: {{ data.message }}"></textarea>
+                <textarea name="parser_name_template" id="parser-name-template" class="hidden w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm font-mono" rows="3" placeholder="{% raw %}title: Deploy {{ data.status }} — {{ data.app }}&#10;body: {{ data.message }}{% endraw %}"></textarea>
                 <input type="hidden" name="parser_name" id="parser-name-value">
             </div>
             <div>
